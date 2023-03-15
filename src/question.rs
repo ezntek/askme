@@ -14,7 +14,10 @@
  */
 
 use std::fmt;
+use std::fs;
+use std::path::Path;
 use std::io::Write;
+use serde_derive::{Deserialize,Serialize};
 
 #[cfg(test)]
 mod tests {
@@ -27,6 +30,7 @@ mod tests {
     }
 }
 
+#[derive(Deserialize, Serialize)]
 pub struct Question {
     pub permitted_tries: i32,
     pub title: String,
@@ -39,6 +43,14 @@ impl Question {
         Question {
             permitted_tries, title, prompt, correct_answer
         }
+    }
+
+    pub fn from_string(s: String) -> Question {
+        toml::from_str(&s).unwrap()
+    }
+
+    pub fn into_string(&self) -> String {
+        toml::to_string(&self).expect("failed to serialize the struct!")
     }
 
     pub fn ask(&self) -> bool {
@@ -72,5 +84,37 @@ impl Question {
 impl fmt::Display for Question {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Question \"{}\"", self.prompt)
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct Questions {
+    pub entries: Vec<Question>
+}
+
+impl Questions {
+    fn new(entries: Vec<Question>) -> Questions {
+        Questions {
+            entries
+        }
+    }
+
+    fn from_file(file_name: String) -> Questions {
+        toml::from_str(&fs::read_to_string(file_name).expect("There was an error reading the file! perhaps you mistyped the file name?")).expect("")
+    }
+
+    fn into_file(&self, file_name: String) {
+        let path = Path::new(&file_name);
+        let display = path.display();
+
+        let mut file = match std::fs::File::create(&path) {
+            Err(reason) => panic!("Failed to create file {}: {}", display, reason),
+            Ok(f) => f,
+        };
+
+        match file.write_all((toml::to_string(&self).expect("Failed to serialize the struct!")).as_bytes()) {
+            Err(reason) => panic!("Failed to write file {}: {}", display, reason),
+            Ok(_) => println!("Wrote file {} successfuly.", display),
+        }
     }
 }

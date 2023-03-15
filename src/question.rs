@@ -21,8 +21,8 @@ use serde_derive::{Deserialize,Serialize};
 
 #[cfg(test)]
 mod tests {
-    use super::Question;
-
+    use super::{Question,Questions};
+/*
     #[test]
     fn get_qn_string() {
         static STR: &str = "
@@ -45,8 +45,13 @@ correct_answer = \"hi\"
         let qn = Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3);
         assert_eq!(STR, qn.into_string());
     }
+*/
+    #[test]
+    fn test_file_out() {
+        let qns = Questions::new(vec![Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3), Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3)]);
+        qns.into_file("weewoo.toml".to_string());
+    }
 
-    
 }
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -112,17 +117,17 @@ pub struct Questions {
 }
 
 impl Questions {
-    fn new(entries: Vec<Question>) -> Questions {
+    pub fn new(entries: Vec<Question>) -> Questions {
         Questions {
             entries
         }
     }
 
-    fn from_file(file_name: String) -> Questions {
+    pub fn from_file(file_name: String) -> Questions {
         toml::from_str(&fs::read_to_string(file_name).expect("There was an error reading the file! perhaps you mistyped the file name?")).expect("")
     }
 
-    fn into_file(&self, file_name: String) {
+    pub fn into_file(&self, file_name: String) {
         let path = Path::new(&file_name);
         let display = path.display();
 

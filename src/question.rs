@@ -51,7 +51,6 @@ correct_answer = \"hi\"
         let qns = Questions::new(vec![Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3), Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3)]);
         qns.into_file("weewoo.toml".to_string());
     }
-
 }
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]

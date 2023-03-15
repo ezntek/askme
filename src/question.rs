@@ -51,6 +51,12 @@ correct_answer = \"hi\"
         let qns = Questions::new(vec![Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3), Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3)]);
         qns.into_file("weewoo.toml".to_string());
     }
+
+    #[test]
+    fn test_file_in() {
+        let qns = Questions::new(vec![Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3), Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3)]);
+        assert_eq!(Questions::from_file("weewoo.toml".to_string()), qns);
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
@@ -110,15 +116,15 @@ impl fmt::Display for Question {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct Questions {
-    pub entries: Vec<Question>
+    pub question: Vec<Question>
 }
 
 impl Questions {
-    pub fn new(entries: Vec<Question>) -> Questions {
+    pub fn new(question: Vec<Question>) -> Questions {
         Questions {
-            entries
+            question
         }
     }
 

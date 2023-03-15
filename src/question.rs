@@ -74,14 +74,6 @@ impl Question {
         }
     }
 
-    pub fn from_string(s: String) -> Question {
-        toml::from_str(&s).unwrap()
-    }
-
-    pub fn into_string(&self) -> String {
-        toml::to_string(&self).expect("failed to serialize the struct!")
-    }
-
     pub fn ask(&self) -> bool {
         let stdin = std::io::stdin();
          

@@ -24,13 +24,32 @@ mod tests {
     use super::Question;
 
     #[test]
-    fn ask_output_correct() {
-        let qn = Question::new("TestQuestion".to_string(), "correctanswer".to_string(), "What is the correct answer?".to_string(), 3);
-        assert_eq!(qn.ask(), true)
+    fn get_qn_string() {
+        static STR: &str = "
+        permitted_tries = 3
+        title = 'hello'
+        prompt = 'hello?'
+        correct_answer = 'hi'
+        ";
+        let qn = Question::from_string(STR.to_string());
+        assert_eq!(qn, Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3));
     }
+
+    #[test]
+    fn into_qn_string() {
+        static STR: &str = "permitted_tries = 3
+title = \"hello\"
+prompt = \"hello?\"
+correct_answer = \"hi\"
+"; // funny syntax bc newlines suck
+        let qn = Question::new("hello".to_string(), "hi".to_string(), "hello?".to_string(), 3);
+        assert_eq!(STR, qn.into_string());
+    }
+
+    
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct Question {
     pub permitted_tries: i32,
     pub title: String,
